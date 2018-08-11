@@ -1,0 +1,40 @@
+version: '3'
+services:
+  server:
+    build:
+      context: ./server
+    links:
+      - 'db'
+    environment:
+      - MODE=PRODUCTION
+    ports:
+      - '4000:4000'
+    networks:
+      - server-network
+  app:
+    build:
+      context: ./app
+    links:
+      - 'server'
+    environment:
+      - MODE=PRODUCTION
+    ports:
+      - '3000:3000'
+    networks:
+      - server-network
+  db:
+    image: "mongo:3.6"
+    volumes:
+      - mongodb-data:/data/db
+    ports:
+      - '27017:27017'
+    networks:
+      - server-network
+networks:
+  server-network:
+    driver: bridge
+volumes:
+  node_modules:
+    driver: local
+  mongodb-data:
+    driver: local
